@@ -33,7 +33,7 @@ export default function AnalyticsPage() {
       const conversions = await getUserConversions(user.id)
 
       const now = new Date()
-      const months = []
+      const months: Array<{ name: string; uploads: number; conversions: number }> = []
       for (let i = 5; i >= 0; i--) {
         const date = new Date(now.getFullYear(), now.getMonth() - i, 1)
         months.push({
