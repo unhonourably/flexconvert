@@ -28,7 +28,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-black relative overflow-hidden">
+    <div className={`min-h-screen bg-black relative ${mobileMenuOpen ? 'overflow-visible' : 'overflow-hidden'}`}>
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <header className={`py-4 sm:py-8 flex items-center justify-between transition-all duration-1000 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
           <div className="flex items-center gap-3">
@@ -75,42 +75,44 @@ export default function Home() {
           {mobileMenuOpen && (
             <div className="fixed inset-0 z-50 md:hidden">
               <div className="absolute inset-0 bg-black/60" onClick={() => setMobileMenuOpen(false)}></div>
-              <div className="absolute inset-0 flex items-center justify-center p-4">
-                <div className="w-full max-w-sm bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden shadow-2xl">
-                  <div className="flex items-center justify-between p-4 border-b border-gray-800">
-                    <div className="text-white font-bold">Menu</div>
-                    <button
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="p-2 text-gray-400 hover:text-white transition-colors"
-                      aria-label="Close menu"
-                    >
-                      <XMarkIcon className="w-6 h-6" />
-                    </button>
+              <div className="absolute inset-0 overflow-y-auto">
+                <div className="min-h-full flex items-start justify-center p-4 pt-20">
+                  <div className="w-full max-w-sm bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden shadow-2xl">
+                    <div className="flex items-center justify-between p-4 border-b border-gray-800">
+                      <div className="text-white font-bold">Menu</div>
+                      <button
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="p-2 text-gray-400 hover:text-white transition-colors"
+                        aria-label="Close menu"
+                      >
+                        <XMarkIcon className="w-6 h-6" />
+                      </button>
+                    </div>
+                    <nav className="p-2">
+                      <Link href="#features" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 text-gray-400 hover:text-white hover:bg-gray-800/50">
+                        <span>Features</span>
+                      </Link>
+                      <Link href="#pricing" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 text-gray-400 hover:text-white hover:bg-gray-800/50">
+                        <span>Pricing</span>
+                      </Link>
+                      {user ? (
+                        <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-gray-800/50 hover:bg-gray-800 border border-gray-700 rounded-xl text-white transition-all duration-300">
+                          {user.user_metadata?.avatar_url ? (
+                            <img src={user.user_metadata.avatar_url} alt={user.email || 'User'} className="w-8 h-8 rounded-full" />
+                          ) : (
+                            <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                              {(user.user_metadata?.full_name || user.user_metadata?.name || user.email?.charAt(0) || 'U').toUpperCase()}
+                            </div>
+                          )}
+                          <span>Dashboard</span>
+                        </Link>
+                      ) : (
+                        <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="flex items-center justify-center gap-2 px-4 py-3 bg-purple-600 hover:bg-purple-500 rounded-xl text-white font-medium transition-all duration-300">
+                          <span>Sign In</span>
+                        </Link>
+                      )}
+                    </nav>
                   </div>
-                  <nav className="p-2">
-                    <Link href="#features" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 text-gray-400 hover:text-white hover:bg-gray-800/50">
-                      <span>Features</span>
-                    </Link>
-                    <Link href="#pricing" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 text-gray-400 hover:text-white hover:bg-gray-800/50">
-                      <span>Pricing</span>
-                    </Link>
-                    {user ? (
-                      <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-gray-800/50 hover:bg-gray-800 border border-gray-700 rounded-xl text-white transition-all duration-300">
-                        {user.user_metadata?.avatar_url ? (
-                          <img src={user.user_metadata.avatar_url} alt={user.email || 'User'} className="w-8 h-8 rounded-full" />
-                        ) : (
-                          <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
-                            {(user.user_metadata?.full_name || user.user_metadata?.name || user.email?.charAt(0) || 'U').toUpperCase()}
-                          </div>
-                        )}
-                        <span>Dashboard</span>
-                      </Link>
-                    ) : (
-                      <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="flex items-center justify-center gap-2 px-4 py-3 bg-purple-600 hover:bg-purple-500 rounded-xl text-white font-medium transition-all duration-300">
-                        <span>Sign In</span>
-                      </Link>
-                    )}
-                  </nav>
                 </div>
               </div>
             </div>
