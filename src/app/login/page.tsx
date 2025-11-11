@@ -22,6 +22,12 @@ export default function LoginPage() {
     if (user) {
       router.push('/dashboard')
     }
+    
+    const urlParams = new URLSearchParams(window.location.search)
+    const errorParam = urlParams.get('error')
+    if (errorParam) {
+      setError(decodeURIComponent(errorParam))
+    }
   }, [user, router])
 
   const handleEmailAuth = async (e: React.FormEvent) => {
@@ -41,12 +47,24 @@ export default function LoginPage() {
         if (error) throw error
         setError('Check your email to confirm your account!')
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         })
-        if (error) throw error
-        router.push('/dashboard')
+        
+        if (error) {
+          if (error.message.includes('Invalid login credentials')) {
+            const { data: existingUser } = await supabase.auth.getUser()
+            if (!existingUser?.user) {
+              throw new Error('Invalid email or password. If you signed up with Discord or GitHub, please use that method to sign in.')
+            }
+          }
+          throw error
+        }
+        
+        if (data?.user) {
+          router.push('/dashboard')
+        }
       }
     } catch (err: any) {
       setError(err.message || 'An error occurred')
@@ -60,10 +78,14 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
         },
       })
       if (error) throw error
