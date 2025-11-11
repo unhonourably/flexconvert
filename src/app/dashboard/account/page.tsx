@@ -107,38 +107,6 @@ export default function AccountPage() {
     setMessage(null)
 
     try {
-      const { data: identitiesData } = await supabase.auth.getUserIdentities()
-      const identities = identitiesData?.identities || []
-      const providerIdentity = identities.find((id: any) => id.provider === provider)
-      
-      if (providerIdentity) {
-        const checkResponse = await fetch('/api/account/check-existing', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            provider,
-            email: providerIdentity.identity_data?.email || user.email
-          })
-        })
-
-        const checkData = await checkResponse.json()
-
-        if (checkData.exists) {
-          setMergeData({
-            provider,
-            existingUserId: checkData.existingUserId,
-            existingUserEmail: checkData.existingUserEmail,
-            uploadCount: checkData.uploadCount,
-            conversionCount: checkData.conversionCount,
-            existingUserCreatedAt: checkData.existingUserCreatedAt,
-            currentUserCreatedAt: checkData.currentUserCreatedAt
-          })
-          setShowMergeModal(true)
-          setLinking(null)
-          return
-        }
-      }
-
       const { data: linkResponse, error } = await supabase.auth.linkIdentity({
         provider,
         options: {
@@ -146,14 +114,59 @@ export default function AccountPage() {
         },
       })
       
-      if (error) throw error
+      if (error) {
+        console.error('Link identity error:', error)
+        throw error
+      }
       
       if (linkResponse?.url) {
         window.location.href = linkResponse.url
+      } else {
+        console.error('No URL in linkResponse:', linkResponse)
+        throw new Error('No redirect URL received from OAuth provider')
       }
     } catch (err: any) {
-      setMessage({ type: 'error', text: err.message || `Failed to link ${provider} account` })
+      console.error('Error linking account:', err)
+      setMessage({ type: 'error', text: err.message || `Failed to link ${provider} account. Please try again.` })
       setLinking(null)
+    }
+  }
+
+  const handleUnlinkAccount = async (provider: 'discord' | 'github' | 'email') => {
+    if (!user) return
+
+    const { data: identitiesData } = await supabase.auth.getUserIdentities()
+    const identities = identitiesData?.identities || []
+    
+    if (identities.length <= 1) {
+      setMessage({ type: 'error', text: 'Cannot unlink your last account. You must have at least one linked account.' })
+      return
+    }
+
+    if (!confirm(`Are you sure you want to unlink your ${provider} account? You will no longer be able to sign in with this method.`)) {
+      return
+    }
+
+    setLoading(true)
+    setMessage(null)
+
+    try {
+      const identityToUnlink = identities.find((id: any) => id.provider === provider)
+      
+      if (!identityToUnlink) {
+        throw new Error(`${provider} account is not linked`)
+      }
+
+      const { error } = await supabase.auth.unlinkIdentity(identityToUnlink)
+      
+      if (error) throw error
+
+      setMessage({ type: 'success', text: `${provider} account unlinked successfully` })
+      loadLinkedAccounts()
+    } catch (err: any) {
+      setMessage({ type: 'error', text: err.message || `Failed to unlink ${provider} account` })
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -449,7 +462,18 @@ export default function AccountPage() {
                 </div>
               </div>
               {hasDiscord ? (
-                <CheckCircleIcon className="w-6 h-6 text-green-400" />
+                <div className="flex items-center gap-2">
+                  <CheckCircleIcon className="w-6 h-6 text-green-400" />
+                  {linkedAccounts.length > 1 && (
+                    <button
+                      onClick={() => handleUnlinkAccount('discord')}
+                      disabled={loading}
+                      className="px-3 py-1.5 text-xs bg-red-600/20 hover:bg-red-600/30 text-red-400 border border-red-600/30 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Unlink
+                    </button>
+                  )}
+                </div>
               ) : (
                 <button
                   onClick={() => handleLinkAccount('discord')}
@@ -476,7 +500,18 @@ export default function AccountPage() {
                 </div>
               </div>
               {hasGitHub ? (
-                <CheckCircleIcon className="w-6 h-6 text-green-400" />
+                <div className="flex items-center gap-2">
+                  <CheckCircleIcon className="w-6 h-6 text-green-400" />
+                  {linkedAccounts.length > 1 && (
+                    <button
+                      onClick={() => handleUnlinkAccount('github')}
+                      disabled={loading}
+                      className="px-3 py-1.5 text-xs bg-red-600/20 hover:bg-red-600/30 text-red-400 border border-red-600/30 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Unlink
+                    </button>
+                  )}
+                </div>
               ) : (
                 <button
                   onClick={() => handleLinkAccount('github')}

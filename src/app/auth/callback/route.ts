@@ -64,6 +64,44 @@ export async function GET(request: Request) {
       }
       
       if (data?.user) {
+        const { data: identitiesData } = await supabase.auth.getUserIdentities()
+        const identities = identitiesData?.identities || []
+        const providerIdentity = identities.find((id: any) => 
+          id.provider === 'discord' || id.provider === 'github'
+        )
+        
+        if (providerIdentity && data.user.email) {
+          const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+          const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+          const { createClient: createAdminClient } = await import('@supabase/supabase-js')
+          
+          const adminSupabase = createAdminClient(supabaseUrl, supabaseServiceKey, {
+            auth: {
+              autoRefreshToken: false,
+              persistSession: false
+            }
+          })
+
+          const { data: { users }, error: listError } = await adminSupabase.auth.admin.listUsers()
+          
+          if (!listError && users) {
+            const existingUser = users.find(u => {
+              if (u.id === data.user.id) return false
+              const userIdentities = u.identities || []
+              const hasProvider = userIdentities.some((id: any) => id.provider === providerIdentity.provider)
+              const providerId = userIdentities.find((id: any) => id.provider === providerIdentity.provider)
+              const providerEmail = providerId?.identity_data?.email || u.email
+              return hasProvider && providerEmail === data.user.email
+            })
+
+            if (existingUser) {
+              await adminSupabase.auth.admin.deleteUser(data.user.id)
+              
+              return NextResponse.redirect(`${origin}/login?error=${encodeURIComponent(`An account with this ${providerIdentity.provider} email already exists. Please sign in with your existing account.`)}`)
+            }
+          }
+        }
+        
         return NextResponse.redirect(`${origin}/dashboard`)
       }
     }
