@@ -3,9 +3,17 @@ import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url)
+  const errorParam = requestUrl.searchParams.get('error')
+  const errorDescription = requestUrl.searchParams.get('error_description')
   const code = requestUrl.searchParams.get('code')
   const isLinking = requestUrl.searchParams.get('link') === 'true'
   const origin = requestUrl.origin
+
+  if (errorParam || errorDescription) {
+    const message = decodeURIComponent(errorDescription || errorParam || 'Authentication error')
+    const target = isLinking ? '/dashboard/account' : '/login'
+    return NextResponse.redirect(`${origin}${target}?error=${encodeURIComponent(message)}`)
+  }
 
   if (code) {
     const supabase = await createClient()
@@ -70,6 +78,22 @@ export async function GET(request: Request) {
           id.provider === 'discord' || id.provider === 'github'
         )
         
+        // Set primary_provider once (on first login) if missing
+        try {
+          const currentPrimary = (data.user.user_metadata as any)?.primary_provider
+          const candidate = (data.user.app_metadata as any)?.provider
+          if (!currentPrimary && candidate) {
+            await supabase.auth.updateUser({
+              data: {
+                ...(data.user.user_metadata || {}),
+                primary_provider: candidate,
+              }
+            })
+          }
+        } catch (e) {
+          console.error('Failed to set primary_provider:', e)
+        }
+        
         if (providerIdentity && data.user.email) {
           const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
           const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -107,5 +131,7 @@ export async function GET(request: Request) {
     }
   }
 
+  // If no code and no error, redirect to dashboard
+  // This handles cases where the callback is accessed directly
   return NextResponse.redirect(`${origin}/dashboard`)
 }

@@ -28,6 +28,7 @@ export default function Dashboard() {
     { day: 'Sun', uploads: 0 },
     { day: 'Mon', uploads: 0 },
   ])
+  const [userAvatarUrl, setUserAvatarUrl] = useState<string | null>(null)
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
 
@@ -38,8 +39,25 @@ export default function Dashboard() {
   useEffect(() => {
     if (user) {
       loadStats()
+      loadAvatar()
     }
   }, [user])
+
+  const loadAvatar = async () => {
+    try {
+      const defaultAvatar = user?.user_metadata?.avatar_url || null
+      const primary = (user?.user_metadata as any)?.primary_provider || (user?.app_metadata as any)?.provider
+      const supabase = (await import('@/lib/supabase/client')).createClient()
+      const { data } = await supabase.auth.getUserIdentities()
+      const identities = data?.identities || []
+      const selected = identities.find((id: any) => id.provider === primary)
+      const idData = selected?.identity_data || {}
+      const providerAvatar: string | null = idData.avatar_url || idData.picture || idData.avatar || null
+      setUserAvatarUrl(providerAvatar || defaultAvatar)
+    } catch {
+      setUserAvatarUrl(user?.user_metadata?.avatar_url || null)
+    }
+  }
 
   const loadStats = async () => {
     if (!user) return
@@ -76,7 +94,7 @@ export default function Dashboard() {
 
   const userDisplayName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'User'
   const userInitial = userDisplayName.charAt(0).toUpperCase()
-  const userAvatar = user?.user_metadata?.avatar_url
+  const userAvatar = userAvatarUrl
   const formatBytes = (bytes: number) => {
     if (bytes === 0) return '0 KB'
     const kb = bytes / 1024

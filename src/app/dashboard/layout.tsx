@@ -22,6 +22,7 @@ export default function DashboardLayout({
 }) {
   const [mounted, setMounted] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [userAvatarUrl, setUserAvatarUrl] = useState<string | null>(null)
   const { user, loading: authLoading, signOut } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
@@ -40,6 +41,26 @@ export default function DashboardLayout({
     }
   }, [user, authLoading, router])
 
+  useEffect(() => {
+    const loadAvatar = async () => {
+      if (!user) return
+      try {
+        const defaultAvatar = user.user_metadata?.avatar_url || null
+        const primary = (user.user_metadata as any)?.primary_provider || (user.app_metadata as any)?.provider
+        const supabase = (await import('@/lib/supabase/client')).createClient()
+        const { data } = await supabase.auth.getUserIdentities()
+        const identities = data?.identities || []
+        const selected = identities.find((id: any) => id.provider === primary)
+        const idData = selected?.identity_data || {}
+        const providerAvatar: string | null = idData.avatar_url || idData.picture || idData.avatar || null
+        setUserAvatarUrl(providerAvatar || defaultAvatar)
+      } catch {
+        setUserAvatarUrl(user.user_metadata?.avatar_url || null)
+      }
+    }
+    loadAvatar()
+  }, [user])
+
   const handleSignOut = async () => {
     await signOut()
     router.push('/login')
@@ -55,7 +76,7 @@ export default function DashboardLayout({
 
   const userDisplayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || 'User'
   const userInitial = userDisplayName.charAt(0).toUpperCase()
-  const userAvatar = user.user_metadata?.avatar_url
+  const userAvatar = userAvatarUrl
 
   const isActive = (path: string) => pathname === path
 

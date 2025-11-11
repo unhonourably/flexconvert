@@ -85,3 +85,28 @@ CREATE POLICY "Users can delete their own files"
   ON storage.objects FOR DELETE
   USING (bucket_id = 'uploads' AND auth.uid()::text = (storage.foldername(name))[1]);
 
+-- Account merge tokens table
+CREATE TABLE IF NOT EXISTS account_merge_tokens (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  code_hash TEXT NOT NULL UNIQUE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE account_merge_tokens ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can insert their merge tokens"
+  ON account_merge_tokens FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can view their merge tokens"
+  ON account_merge_tokens FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete their merge tokens"
+  ON account_merge_tokens FOR DELETE
+  USING (auth.uid() = user_id);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_account_merge_tokens_user_id
+  ON account_merge_tokens(user_id);
+

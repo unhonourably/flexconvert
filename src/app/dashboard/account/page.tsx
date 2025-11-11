@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import {
   UserCircleIcon,
   EnvelopeIcon,
@@ -9,8 +8,7 @@ import {
   TrashIcon,
   LinkIcon,
   CheckCircleIcon,
-  XMarkIcon,
-  ExclamationTriangleIcon
+  CodeBracketIcon
 } from '@heroicons/react/24/outline'
 import { useAuth } from '@/contexts/AuthContext'
 import { createClient } from '@/lib/supabase/client'
@@ -21,19 +19,13 @@ export default function AccountPage() {
   const [linking, setLinking] = useState<string | null>(null)
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
   const [linkedAccounts, setLinkedAccounts] = useState<string[]>([])
-  const [showMergeModal, setShowMergeModal] = useState(false)
-  const [mergeData, setMergeData] = useState<{
-    provider: string
-    existingUserId: string
-    existingUserEmail: string
-    uploadCount: number
-    conversionCount: number
-    existingUserCreatedAt: string
-    currentUserCreatedAt: string
-  } | null>(null)
-  const [merging, setMerging] = useState(false)
+  const [linkedNames, setLinkedNames] = useState<Record<string, string>>({})
+  const [generatedMergeCode, setGeneratedMergeCode] = useState<string | null>(null)
+  const [mergeCodeInput, setMergeCodeInput] = useState('')
+  const [generatingMergeCode, setGeneratingMergeCode] = useState(false)
+  const [mergingWithCode, setMergingWithCode] = useState(false)
+  const [mergeSuccess, setMergeSuccess] = useState(false)
   const { user } = useAuth()
-  const router = useRouter()
   const supabase = createClient()
 
   const [formData, setFormData] = useState({
@@ -43,6 +35,25 @@ export default function AccountPage() {
     newPassword: '',
     confirmPassword: ''
   })
+
+  const getPrimaryProvider = () => {
+    // Prefer explicit metadata primary_provider; fallback to current session provider
+    return (user?.user_metadata as any)?.primary_provider || (user?.app_metadata as any)?.provider || null
+  }
+
+  const getPrimaryProviderEmail = async (): Promise<string | null> => {
+    try {
+      const { data } = await supabase.auth.getUserIdentities()
+      const identities = data?.identities || []
+      const primary = getPrimaryProvider()
+      const selected = identities.find((id: any) => id.provider === primary)
+      const idData = selected?.identity_data || {}
+      const providerEmail: string | null = idData.email || user?.email || null
+      return providerEmail
+    } catch {
+      return user?.email || null
+    }
+  }
 
   useEffect(() => {
     setMounted(true)
@@ -60,7 +71,6 @@ export default function AccountPage() {
     const urlParams = new URLSearchParams(window.location.search)
     const linked = urlParams.get('linked')
     const error = urlParams.get('error')
-    const mergeParam = urlParams.get('merge')
     
     if (linked === 'true') {
       setMessage({ type: 'success', text: 'Account linked successfully!' })
@@ -72,20 +82,6 @@ export default function AccountPage() {
       setMessage({ type: 'error', text: decodeURIComponent(error) })
       window.history.replaceState({}, '', window.location.pathname)
     }
-
-    if (mergeParam && user) {
-      try {
-        const mergeData = JSON.parse(decodeURIComponent(mergeParam))
-        setMergeData({
-          ...mergeData,
-          currentUserCreatedAt: user.created_at
-        })
-        setShowMergeModal(true)
-        window.history.replaceState({}, '', window.location.pathname)
-      } catch (e) {
-        console.error('Error parsing merge data:', e)
-      }
-    }
   }, [user])
 
   const loadLinkedAccounts = async () => {
@@ -95,6 +91,23 @@ export default function AccountPage() {
       const identities = data?.identities || []
       const providers = identities.map((identity: any) => identity.provider) || []
       setLinkedAccounts(providers)
+
+      const names: Record<string, string> = {}
+      identities.forEach((identity: any) => {
+        const info = identity?.identity_data || {}
+        const display =
+          info.user_name ||
+          info.username ||
+          info.preferred_username ||
+          info.full_name ||
+          info.name ||
+          info.login ||
+          info.nickname ||
+          info.email ||
+          ''
+        names[identity.provider] = display
+      })
+      setLinkedNames(names)
     } catch (error) {
       console.error('Error loading linked accounts:', error)
     }
@@ -107,23 +120,43 @@ export default function AccountPage() {
     setMessage(null)
 
     try {
+      const redirectUrl = `${window.location.origin}/auth/callback?link=true`
+      console.log('Attempting to link identity with redirect:', redirectUrl)
+      
       const { data: linkResponse, error } = await supabase.auth.linkIdentity({
         provider,
         options: {
-          redirectTo: `${window.location.origin}/auth/callback?link=true`,
+          redirectTo: redirectUrl,
         },
       })
       
       if (error) {
         console.error('Link identity error:', error)
-        throw error
+
+        if (error.message?.toLowerCase().includes('already linked')) {
+          setMessage({
+            type: 'error',
+            text: `This ${provider} account is already linked to another user. Ask that account to generate a merge code from its settings, then enter the code here to merge the accounts.`,
+          })
+        } else {
+          setMessage({
+            type: 'error',
+            text: error.message || `Failed to link ${provider} account. Make sure manual linking is enabled in Supabase settings.`,
+          })
+        }
+        setLinking(null)
+        return
       }
       
+      console.log('Link response:', linkResponse)
+      
       if (linkResponse?.url) {
+        console.log('Redirecting to:', linkResponse.url)
         window.location.href = linkResponse.url
       } else {
         console.error('No URL in linkResponse:', linkResponse)
-        throw new Error('No redirect URL received from OAuth provider')
+        setMessage({ type: 'error', text: 'No redirect URL received. Please check that manual linking is enabled in your Supabase project settings.' })
+        setLinking(null)
       }
     } catch (err: any) {
       console.error('Error linking account:', err)
@@ -170,26 +203,62 @@ export default function AccountPage() {
     }
   }
 
-  const handleMergeAccounts = async () => {
-    if (!mergeData || !user) return
+  const handleGenerateMergeCode = async () => {
+    if (!user) return
 
-    setMerging(true)
+    setGeneratingMergeCode(true)
     setMessage(null)
 
     try {
-      const currentUserCreatedAt = new Date(mergeData.currentUserCreatedAt)
-      const existingUserCreatedAt = new Date(mergeData.existingUserCreatedAt)
-      const keepEmail = currentUserCreatedAt < existingUserCreatedAt 
-        ? mergeData.existingUserEmail 
-        : user.email
+      const response = await fetch('/api/account/merge-code', {
+        method: 'POST'
+      })
 
-      const response = await fetch('/api/account/merge', {
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to generate merge code')
+      }
+
+      setGeneratedMergeCode(data.code)
+      setMessage({
+        type: 'success',
+        text: 'Merge code generated. Share this code with the account you want to merge into this one.'
+      })
+    } catch (err: any) {
+      setMessage({ type: 'error', text: err.message || 'Failed to generate merge code' })
+    } finally {
+      setGeneratingMergeCode(false)
+    }
+  }
+
+  const handleCopyMergeCode = async () => {
+    if (!generatedMergeCode) return
+
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard) {
+        await navigator.clipboard.writeText(generatedMergeCode)
+        setMessage({ type: 'success', text: 'Merge code copied to clipboard' })
+      }
+    } catch (err: any) {
+      setMessage({ type: 'error', text: err.message || 'Unable to copy merge code' })
+    }
+  }
+
+  const handleMergeWithCode = async () => {
+    if (!mergeCodeInput.trim()) {
+      setMessage({ type: 'error', text: 'Please enter a merge code' })
+      return
+    }
+
+    setMergingWithCode(true)
+    setMessage(null)
+
+    try {
+      const response = await fetch('/api/account/use-merge-code', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          existingUserId: mergeData.existingUserId,
-          keepEmail
-        })
+        body: JSON.stringify({ code: mergeCodeInput.trim() })
       })
 
       const data = await response.json()
@@ -198,65 +267,23 @@ export default function AccountPage() {
         throw new Error(data.error || 'Failed to merge accounts')
       }
 
-      setMessage({ 
-        type: 'success', 
-        text: `Accounts merged successfully! ${data.mergedUploads} uploads and ${data.mergedConversions} conversions transferred.` 
+      setMessage({
+        type: 'success',
+        text: `Accounts merged successfully! ${data.mergedUploads} uploads and ${data.mergedConversions} conversions transferred.`
       })
-      setShowMergeModal(false)
-      setMergeData(null)
-      
+      setMergeCodeInput('')
+      setGeneratedMergeCode(null)
+      setMergeSuccess(true)
+
       await supabase.auth.refreshSession()
-      loadLinkedAccounts()
-      
+      // Briefly show success, then hard reload the page
       setTimeout(() => {
-        window.location.reload()
-      }, 2000)
+        if (typeof window !== 'undefined') window.location.reload()
+      }, 1200)
     } catch (err: any) {
       setMessage({ type: 'error', text: err.message || 'Failed to merge accounts' })
     } finally {
-      setMerging(false)
-    }
-  }
-
-  const handleDeclineMerge = async () => {
-    if (!mergeData) return
-
-    setMerging(true)
-    setMessage(null)
-
-    try {
-      const response = await fetch('/api/account/delete-existing', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          existingUserId: mergeData.existingUserId
-        })
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to delete existing account')
-      }
-
-      setShowMergeModal(false)
-      setMergeData(null)
-      
-      const { data: linkData, error: linkError } = await supabase.auth.linkIdentity({
-        provider: mergeData.provider as 'discord' | 'github',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback?link=true`,
-        },
-      })
-      
-      if (linkError) throw linkError
-      
-      if (linkData?.url) {
-        window.location.href = linkData.url
-      }
-    } catch (err: any) {
-      setMessage({ type: 'error', text: err.message || 'Failed to proceed with linking' })
-      setMerging(false)
+      setMergingWithCode(false)
     }
   }
 
@@ -298,6 +325,19 @@ export default function AccountPage() {
     }
   }
 
+  const isOAuthUser = (() => {
+    const authProvider = user?.app_metadata?.provider || 'email'
+    return authProvider === 'discord' || authProvider === 'github'
+  })()
+
+  const baseHasEmail = linkedAccounts.includes('email')
+  const providerName = (() => {
+    const p = user?.app_metadata?.provider
+    if (p === 'discord') return 'Discord'
+    if (p === 'github') return 'GitHub'
+    return 'Email'
+  })()
+
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!user) return
@@ -321,14 +361,26 @@ export default function AccountPage() {
     setMessage(null)
 
     try {
-      const { error } = await supabase.auth.updateUser({
-        password: formData.newPassword
-      })
+      const providerEmail = await getPrimaryProviderEmail()
+      const updates: any = { password: formData.newPassword }
+      if (providerEmail && providerEmail !== user.email) {
+        updates.email = providerEmail
+      }
+
+      const { error } = await supabase.auth.updateUser(updates)
       if (error) throw error
 
-      setMessage({ type: 'success', text: hasEmail ? 'Password updated successfully!' : 'Password set successfully! You can now sign in with email/password.' })
+      const nowHasEmail = true
+      setMessage({ type: 'success', text: baseHasEmail || nowHasEmail ? 'Password updated successfully!' : 'Password set successfully! You can now sign in with email/password.' })
       setFormData(prev => ({ ...prev, currentPassword: '', newPassword: '', confirmPassword: '' }))
-      loadLinkedAccounts()
+
+      await supabase.auth.refreshSession()
+      await loadLinkedAccounts()
+      setLinkedAccounts(prev => prev.includes('email') ? prev : [...prev, 'email'])
+
+      if (updates.email) {
+        setFormData(prev => ({ ...prev, email: updates.email }))
+      }
     } catch (error: any) {
       setMessage({ type: 'error', text: error.message || 'Failed to set password' })
     } finally {
@@ -350,10 +402,6 @@ export default function AccountPage() {
 
   if (!user) return null
 
-  const authProvider = user.app_metadata?.provider || 'email'
-  const isOAuthUser = authProvider === 'discord' || authProvider === 'github'
-  const providerName = authProvider === 'discord' ? 'Discord' : authProvider === 'github' ? 'GitHub' : 'Email'
-  
   const hasDiscord = linkedAccounts.includes('discord')
   const hasGitHub = linkedAccounts.includes('github')
   const hasEmail = linkedAccounts.includes('email')
@@ -459,6 +507,9 @@ export default function AccountPage() {
                   <div className="text-sm text-gray-400">
                     {hasDiscord ? 'Linked' : 'Not linked'}
                   </div>
+                  {hasDiscord && linkedNames.discord && (
+                    <div className="text-xs text-gray-500">Discord - {linkedNames.discord}</div>
+                  )}
                 </div>
               </div>
               {hasDiscord ? (
@@ -497,6 +548,9 @@ export default function AccountPage() {
                   <div className="text-sm text-gray-400">
                     {hasGitHub ? 'Linked' : 'Not linked'}
                   </div>
+                  {hasGitHub && linkedNames.github && (
+                    <div className="text-xs text-gray-500">GitHub - {linkedNames.github}</div>
+                  )}
                 </div>
               </div>
               {hasGitHub ? (
@@ -531,6 +585,9 @@ export default function AccountPage() {
                   <div className="text-sm text-gray-400">
                     {hasEmail ? 'Linked (password set)' : 'Not linked (optional)'}
                   </div>
+                  {hasEmail && user?.email && (
+                    <div className="text-xs text-gray-500">Email - {user.email}</div>
+                  )}
                 </div>
               </div>
               {hasEmail ? (
@@ -608,6 +665,68 @@ export default function AccountPage() {
           </form>
         </div>
 
+        <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <CodeBracketIcon className="w-6 h-6 text-purple-400" />
+            <h2 className="text-xl font-bold text-white">Account Merge Codes</h2>
+          </div>
+          <p className="text-sm text-gray-400 mb-6">
+            Generate a merge code on the account you plan to retire, then enter it below on the account you want to keep. The other account will be deleted and all uploads and conversions will be moved here.
+          </p>
+          <div className="space-y-4">
+            <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                  <div className="text-sm text-gray-400 mb-1">Your merge code</div>
+                  <div className="text-lg font-mono text-white">
+                    {generatedMergeCode ? generatedMergeCode : 'Generate a code'}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleGenerateMergeCode}
+                    disabled={generatingMergeCode}
+                    className="px-4 py-2 bg-purple-600 hover:bg-purple-500 rounded-lg text-white text-sm font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {generatingMergeCode ? 'Generating...' : 'Generate Code'}
+                  </button>
+                  <button
+                    onClick={handleCopyMergeCode}
+                    disabled={!generatedMergeCode}
+                    className="px-3 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg text-sm text-gray-300 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Copy
+                  </button>
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 mt-3">
+                Share this code with the account you want to merge into this one. Generating a new code will invalidate the previous one.
+              </p>
+            </div>
+
+            <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-4">
+              <label htmlFor="mergeCodeInput" className="block text-sm font-medium text-gray-300 mb-2">
+                Enter merge code from another account
+              </label>
+              <input
+                id="mergeCodeInput"
+                type="text"
+                value={mergeCodeInput}
+                onChange={(e) => setMergeCodeInput(e.target.value.toUpperCase())}
+                placeholder="XXXXXX-XXXXXX"
+                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all font-mono"
+              />
+              <button
+                onClick={handleMergeWithCode}
+                disabled={mergingWithCode || mergeSuccess}
+                className={`mt-3 w-full px-4 py-3 rounded-xl text-white font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed ${mergeSuccess ? 'bg-green-600 hover:bg-green-500' : 'bg-purple-600 hover:bg-purple-500'}`}
+              >
+                {mergeSuccess ? 'Merged!' : (mergingWithCode ? 'Merging...' : 'Merge Account Into This One')}
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div className="bg-gray-900/50 backdrop-blur-sm border border-red-500/30 rounded-xl p-6">
           <div className="flex items-center gap-3 mb-4">
             <TrashIcon className="w-6 h-6 text-red-400" />
@@ -625,62 +744,6 @@ export default function AccountPage() {
           </button>
         </div>
       </div>
-
-      {showMergeModal && mergeData && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-modal-in">
-          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 max-w-md w-full mx-4 sm:mx-auto animate-modal-content-in">
-            <div className="flex items-center gap-3 mb-4">
-              <ExclamationTriangleIcon className="w-6 h-6 text-yellow-400" />
-              <h2 className="text-xl sm:text-2xl font-bold text-white">Account Already Exists</h2>
-            </div>
-            
-            <p className="text-gray-300 mb-4">
-              An account with this {mergeData.provider} email ({mergeData.existingUserEmail}) already exists.
-            </p>
-
-            <div className="bg-gray-800/50 rounded-xl p-4 mb-4">
-              <div className="text-sm text-gray-400 mb-2">Existing account has:</div>
-              <div className="text-white">
-                <div>• {mergeData.uploadCount} uploads</div>
-                <div>• {mergeData.conversionCount} conversions</div>
-              </div>
-            </div>
-
-            <p className="text-gray-300 mb-6">
-              Would you like to merge the accounts? All files from the existing account will be transferred to this account.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-3">
-              <button
-                onClick={handleMergeAccounts}
-                disabled={merging}
-                className="flex-1 px-4 py-2.5 bg-purple-600 hover:bg-purple-500 rounded-lg text-white font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
-              >
-                {merging ? 'Merging...' : 'Yes, Merge Accounts'}
-              </button>
-              <button
-                onClick={handleDeclineMerge}
-                disabled={merging}
-                className="flex-1 px-4 py-2.5 bg-gray-700 hover:bg-gray-600 rounded-lg text-white font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
-              >
-                {merging ? 'Processing...' : 'No, Delete Existing'}
-              </button>
-            </div>
-
-            <button
-              onClick={() => {
-                setShowMergeModal(false)
-                setMergeData(null)
-                setLinking(null)
-              }}
-              disabled={merging}
-              className="w-full mt-3 px-4 py-2 text-gray-400 hover:text-white transition-colors text-sm disabled:opacity-50"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
