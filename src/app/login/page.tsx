@@ -76,8 +76,8 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-black relative overflow-hidden flex items-center justify-center">
 
-      <div className={`relative z-10 w-full max-w-md px-6 transition-all duration-1000 ease-out ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-        <div className={`bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-8 shadow-2xl transition-all duration-1000 ease-out delay-300 ${mounted ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
+      <div className={`relative z-10 w-full max-w-md px-4 sm:px-6 transition-all duration-1000 ease-out ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+        <div className={`bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6 sm:p-8 shadow-2xl transition-all duration-1000 ease-out delay-300 ${mounted ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
           <div className={`flex items-center justify-center gap-3 mb-8 transition-all duration-700 ease-out delay-500 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
             <h1 className="text-2xl font-bold text-purple-400">
               flexconvert

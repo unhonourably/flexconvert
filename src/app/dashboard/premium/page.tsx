@@ -37,23 +37,23 @@ export default function PremiumPage() {
   }
 
   return (
-    <div className="p-8 max-w-6xl mx-auto">
-      <div className={`mb-8 transition-all duration-500 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}`}>
+    <div className="p-4 sm:p-6 md:p-8 max-w-6xl mx-auto">
+      <div className={`mb-6 sm:mb-8 transition-all duration-500 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}`}>
         <div className="flex items-center gap-3 mb-4">
-          <SparklesIcon className="w-8 h-8 text-yellow-400" />
-          <h1 className="text-5xl font-extrabold text-white bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+          <SparklesIcon className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400" />
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
             Premium
           </h1>
         </div>
-        <p className="text-gray-400">Unlock advanced features and unlimited storage</p>
+        <p className="text-sm sm:text-base text-gray-400">Unlock advanced features and unlimited storage</p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6 mb-8">
-        <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-8">
-          <h2 className="text-2xl font-bold text-white mb-2">Free Plan</h2>
+      <div className="grid sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+        <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 sm:p-8">
+          <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">Free Plan</h2>
           <div className="mb-6">
-            <span className="text-4xl font-bold text-white">$0</span>
-            <span className="text-gray-400">/month</span>
+            <span className="text-3xl sm:text-4xl font-bold text-white">$0</span>
+            <span className="text-gray-400 text-sm sm:text-base">/month</span>
           </div>
           <ul className="space-y-3 mb-6">
             {freeFeatures.map((feature, idx) => (
@@ -78,14 +78,14 @@ export default function PremiumPage() {
           </ul>
         </div>
 
-        <div className="bg-purple-600/20 backdrop-blur-sm border-2 border-purple-500/50 rounded-xl p-8 relative overflow-hidden">
-          <div className="absolute top-4 right-4 px-3 py-1 bg-yellow-400 text-black text-xs font-bold rounded-full">
+        <div className="bg-purple-600/20 backdrop-blur-sm border-2 border-purple-500/50 rounded-xl p-6 sm:p-8 relative overflow-hidden">
+          <div className="absolute top-3 right-3 sm:top-4 sm:right-4 px-2 sm:px-3 py-1 bg-yellow-400 text-black text-xs font-bold rounded-full">
             RECOMMENDED
           </div>
-          <h2 className="text-2xl font-bold text-white mb-2">Premium Plan</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">Premium Plan</h2>
           <div className="mb-6">
-            <span className="text-4xl font-bold text-white">$3</span>
-            <span className="text-gray-400"> lifetime</span>
+            <span className="text-3xl sm:text-4xl font-bold text-white">$3</span>
+            <span className="text-gray-400 text-sm sm:text-base"> lifetime</span>
           </div>
           <ul className="space-y-3 mb-6">
             {premiumFeatures.map((feature, idx) => (

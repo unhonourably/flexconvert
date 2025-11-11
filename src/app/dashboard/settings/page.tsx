@@ -48,12 +48,12 @@ export default function UploadSettingsPage() {
   if (!user) return null
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
-      <div className={`mb-8 transition-all duration-500 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}`}>
-        <h1 className="text-5xl font-extrabold text-white mb-2 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+    <div className="p-4 sm:p-6 md:p-8 max-w-4xl mx-auto">
+      <div className={`mb-6 sm:mb-8 transition-all duration-500 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}`}>
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-2 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
           Upload Settings
         </h1>
-        <p className="text-gray-400">Configure your upload and conversion preferences</p>
+        <p className="text-sm sm:text-base text-gray-400">Configure your upload and conversion preferences</p>
       </div>
 
       {saved && (

@@ -551,18 +551,18 @@ export default function UploadsPage() {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
-      <div className={`mb-8 transition-all duration-500 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}`}>
-        <div className="flex items-center justify-between mb-6">
+    <div className="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto">
+      <div className={`mb-6 sm:mb-8 transition-all duration-500 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}`}>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-5xl font-extrabold text-white mb-2 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-2 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
               My Uploads
             </h1>
-            <p className="text-gray-400">Manage your uploaded files and conversions</p>
+            <p className="text-sm sm:text-base text-gray-400">Manage your uploaded files and conversions</p>
           </div>
           <button
             onClick={() => setShowUploadModal(true)}
-            className="px-6 py-3 bg-purple-600 hover:bg-purple-500 rounded-xl text-white font-semibold transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
+              className="px-5 sm:px-6 py-2.5 sm:py-3 bg-purple-600 hover:bg-purple-500 rounded-xl text-white font-semibold transition-all duration-300 transform hover:scale-105 flex items-center gap-2 text-sm sm:text-base min-h-[44px]"
           >
             <ArrowUpTrayIcon className="w-5 h-5" />
             Upload File
@@ -646,7 +646,7 @@ export default function UploadsPage() {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {paginatedUploads.map((upload) => (
               <div
                 key={upload.id}
@@ -766,7 +766,7 @@ export default function UploadsPage() {
                       setFormatSearch('')
                       setSelectedFormat(null)
                     }}
-                    className="flex-1 px-4 py-2 bg-purple-600 hover:bg-purple-500 rounded-lg text-white text-sm font-medium transition-all duration-300"
+                    className="flex-1 px-4 py-2.5 sm:py-2 bg-purple-600 hover:bg-purple-500 rounded-lg text-white text-sm font-medium transition-all duration-300 min-h-[44px]"
                   >
                     {upload.conversions && upload.conversions.length > 0 ? 'Convert Again' : 'Convert'}
                   </button>
@@ -848,17 +848,18 @@ export default function UploadsPage() {
 
       {showUploadModal && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 max-w-md w-full">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-white">Upload File</h2>
+          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4 sm:p-6 max-w-md w-full mx-4 sm:mx-auto">
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+              <h2 className="text-xl sm:text-2xl font-bold text-white">Upload File</h2>
               <button
                 onClick={() => setShowUploadModal(false)}
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-400 hover:text-white transition-colors p-2 -mr-2"
+                aria-label="Close"
               >
-                <XMarkIcon className="w-6 h-6" />
+                <XMarkIcon className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
             </div>
-            <div className="border-2 border-dashed border-gray-700 rounded-xl p-8 text-center hover:border-purple-500/50 transition-colors">
+            <div className="border-2 border-dashed border-gray-700 rounded-xl p-6 sm:p-8 text-center hover:border-purple-500/50 transition-colors">
               <input
                 type="file"
                 onChange={handleFileSelect}
@@ -884,9 +885,9 @@ export default function UploadsPage() {
 
       {showFormatModal && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 max-w-md w-full">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-white">Select Format</h2>
+          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4 sm:p-6 max-w-md w-full mx-4 sm:mx-auto">
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+              <h2 className="text-xl sm:text-2xl font-bold text-white">Select Format</h2>
               <button
                 onClick={() => {
                   setShowFormatModal(false)
@@ -894,9 +895,10 @@ export default function UploadsPage() {
                   setSelectedUpload(null)
                   setSelectedFormat(null)
                 }}
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-400 hover:text-white transition-colors p-2 -mr-2"
+                aria-label="Close"
               >
-                <XMarkIcon className="w-6 h-6" />
+                <XMarkIcon className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
             </div>
             
@@ -973,36 +975,37 @@ export default function UploadsPage() {
 
       {showHistoryModal && selectedUploadForHistory && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-modal-in">
-          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto animate-modal-content-in">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-2xl font-bold text-white">Conversion History</h2>
-                <p className="text-sm text-gray-400 mt-1">{selectedUploadForHistory.original_filename}</p>
+          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4 sm:p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto animate-modal-content-in mx-4 sm:mx-auto">
+            <div className="flex items-start justify-between mb-4 sm:mb-6 gap-4">
+              <div className="flex-1 min-w-0">
+                <h2 className="text-xl sm:text-2xl font-bold text-white">Conversion History</h2>
+                <p className="text-xs sm:text-sm text-gray-400 mt-1 truncate">{selectedUploadForHistory.original_filename}</p>
               </div>
               <button
                 onClick={() => {
                   setShowHistoryModal(false)
                   setSelectedUploadForHistory(null)
                 }}
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-400 hover:text-white transition-colors p-2 -mt-2 -mr-2 flex-shrink-0"
+                aria-label="Close"
               >
-                <XMarkIcon className="w-6 h-6" />
+                <XMarkIcon className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
             </div>
             
             <div className="space-y-3">
               {selectedUploadForHistory.conversions && selectedUploadForHistory.conversions.length > 0 ? (
                 selectedUploadForHistory.conversions.map((conversion) => (
-                  <div key={conversion.id} className="flex items-center justify-between p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors">
-                    <div className="flex items-center gap-3 flex-1">
+                  <div key={conversion.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 sm:p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
                       {getStatusIcon(conversion.status)}
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="text-sm font-medium text-white">
+                          <span className="text-xs sm:text-sm font-medium text-white truncate">
                             {conversion.original_format.toUpperCase()} → {conversion.target_format.toUpperCase()}
                           </span>
                         </div>
-                        <div className="flex items-center gap-4 text-xs text-gray-400">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs text-gray-400">
                           <span>Created: {formatDate(conversion.created_at)}</span>
                           {conversion.completed_at && (
                             <span>Completed: {formatDate(conversion.completed_at)}</span>
@@ -1023,8 +1026,9 @@ export default function UploadsPage() {
                           setShowHistoryModal(false)
                           setSelectedUploadForHistory(null)
                         }}
-                        className="p-2 text-gray-400 hover:text-green-400 hover:bg-green-500/10 rounded-lg transition-all duration-300 ml-4"
+                        className="p-2.5 sm:p-2 text-gray-400 hover:text-green-400 hover:bg-green-500/10 rounded-lg transition-all duration-300 sm:ml-4 min-h-[44px] min-w-[44px] flex items-center justify-center"
                         title="Download converted file"
+                        aria-label="Download"
                       >
                         <ArrowDownTrayIcon className="w-5 h-5" />
                       </button>

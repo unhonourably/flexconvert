@@ -9,7 +9,9 @@ import {
   ChartBarIcon,
   UserCircleIcon,
   ArrowRightOnRectangleIcon,
-  Cog6ToothIcon
+  Cog6ToothIcon,
+  Bars3Icon,
+  XMarkIcon
 } from '@heroicons/react/24/outline'
 import { useAuth } from '@/contexts/AuthContext'
 
@@ -19,6 +21,7 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   const [mounted, setMounted] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const { user, loading: authLoading, signOut } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
@@ -26,6 +29,10 @@ export default function DashboardLayout({
   useEffect(() => {
     setMounted(true)
   }, [])
+
+  useEffect(() => {
+    setSidebarOpen(false)
+  }, [pathname])
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -54,14 +61,27 @@ export default function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-black flex">
-      <aside className="w-64 bg-black border-r border-gray-900 flex flex-col fixed left-0 top-0 bottom-0 z-40">
-        <div className="p-6 border-b border-gray-900">
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        ></div>
+      )}
+      <aside className={`w-64 bg-black border-r border-gray-900 flex flex-col fixed left-0 top-0 bottom-0 z-50 transform transition-transform duration-300 md:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="p-4 md:p-6 border-b border-gray-900 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 group">
             <div>
               <div className="text-white font-bold text-lg">flexconvert</div>
               <div className="text-xs text-gray-500">/dashboard</div>
             </div>
           </Link>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="md:hidden p-2 text-gray-400 hover:text-white transition-colors"
+            aria-label="Close menu"
+          >
+            <XMarkIcon className="w-6 h-6" />
+          </button>
         </div>
         
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
@@ -169,7 +189,16 @@ export default function DashboardLayout({
         </div>
       </aside>
 
-      <main className="flex-1 ml-64 overflow-y-auto bg-black">
+      <main className="flex-1 md:ml-64 overflow-y-auto bg-black">
+        <div className="md:hidden p-4 border-b border-gray-900">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="p-2 text-gray-400 hover:text-white transition-colors"
+            aria-label="Open menu"
+          >
+            <Bars3Icon className="w-6 h-6" />
+          </button>
+        </div>
         {children}
       </main>
     </div>
