@@ -2,19 +2,42 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { ArrowRightIcon, SparklesIcon, CheckIcon, XMarkIcon, BoltIcon, ShieldCheckIcon, CloudIcon, DocumentTextIcon, Bars3Icon } from '@heroicons/react/24/outline'
+import { ArrowRightIcon, SparklesIcon, CheckIcon, BoltIcon, ShieldCheckIcon, CloudIcon, DocumentTextIcon } from '@heroicons/react/24/outline'
 import { useAuth } from '@/contexts/AuthContext'
 
 export default function Home() {
   const [mounted, setMounted] = useState(false)
   const [userCount, setUserCount] = useState<number | null>(null)
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [userAvatarUrl, setUserAvatarUrl] = useState<string | null>(null)
   const { user, loading } = useAuth()
 
   useEffect(() => {
     setMounted(true)
     fetchUserCount()
   }, [])
+
+  useEffect(() => {
+    const loadAvatar = async () => {
+      if (!user) {
+        setUserAvatarUrl(null)
+        return
+      }
+      try {
+        const defaultAvatar = user.user_metadata?.avatar_url || null
+        const primary = (user.user_metadata as any)?.primary_provider || (user.app_metadata as any)?.provider
+        const supabase = (await import('@/lib/supabase/client')).createClient()
+        const { data } = await supabase.auth.getUserIdentities()
+        const identities = data?.identities || []
+        const selected = identities.find((id: any) => id.provider === primary)
+        const idData = selected?.identity_data || {}
+        const providerAvatar: string | null = idData.avatar_url || idData.picture || idData.avatar || null
+        setUserAvatarUrl(providerAvatar || defaultAvatar)
+      } catch {
+        setUserAvatarUrl(user.user_metadata?.avatar_url || null)
+      }
+    }
+    loadAvatar()
+  }, [user])
 
   const fetchUserCount = async () => {
     try {
@@ -28,7 +51,7 @@ export default function Home() {
   }
 
   return (
-    <div className={`min-h-screen bg-black relative ${mobileMenuOpen ? 'overflow-visible' : 'overflow-hidden'}`}>
+    <div className="min-h-screen bg-black relative overflow-hidden">
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <header className={`py-4 sm:py-8 flex items-center justify-between transition-all duration-1000 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
           <div className="flex items-center gap-3">
@@ -42,9 +65,9 @@ export default function Home() {
                 href="/dashboard" 
                 className="flex items-center gap-2 px-3 py-2 bg-gray-800/50 hover:bg-gray-800 border border-gray-700 rounded-lg transition-all duration-300 transform hover:scale-105"
               >
-                {user.user_metadata?.avatar_url ? (
+                {userAvatarUrl ? (
                   <img 
-                    src={user.user_metadata.avatar_url} 
+                    src={userAvatarUrl} 
                     alt={user.email || 'User'} 
                     className="w-8 h-8 rounded-full"
                   />
@@ -63,60 +86,6 @@ export default function Home() {
               </Link>
             )}
           </nav>
-          <div className="md:hidden">
-            <button
-              onClick={() => setMobileMenuOpen(true)}
-              className="p-2 text-gray-400 hover:text-white transition-colors"
-              aria-label="Open menu"
-            >
-              <Bars3Icon className="w-6 h-6" />
-            </button>
-          </div>
-          {mobileMenuOpen && (
-            <div className="fixed inset-0 z-50 md:hidden">
-              <div className="absolute inset-0 bg-black/60" onClick={() => setMobileMenuOpen(false)}></div>
-              <div className="absolute inset-0 overflow-y-auto">
-                <div className="min-h-full flex items-start justify-center p-4 pt-20">
-                  <div className="w-full max-w-sm bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden shadow-2xl">
-                    <div className="flex items-center justify-between p-4 border-b border-gray-800">
-                      <div className="text-white font-bold">Menu</div>
-                      <button
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="p-2 text-gray-400 hover:text-white transition-colors"
-                        aria-label="Close menu"
-                      >
-                        <XMarkIcon className="w-6 h-6" />
-                      </button>
-                    </div>
-                    <nav className="p-2">
-                      <Link href="#features" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 text-gray-400 hover:text-white hover:bg-gray-800/50">
-                        <span>Features</span>
-                      </Link>
-                      <Link href="#pricing" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 text-gray-400 hover:text-white hover:bg-gray-800/50">
-                        <span>Pricing</span>
-                      </Link>
-                      {user ? (
-                        <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-gray-800/50 hover:bg-gray-800 border border-gray-700 rounded-xl text-white transition-all duration-300">
-                          {user.user_metadata?.avatar_url ? (
-                            <img src={user.user_metadata.avatar_url} alt={user.email || 'User'} className="w-8 h-8 rounded-full" />
-                          ) : (
-                            <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
-                              {(user.user_metadata?.full_name || user.user_metadata?.name || user.email?.charAt(0) || 'U').toUpperCase()}
-                            </div>
-                          )}
-                          <span>Dashboard</span>
-                        </Link>
-                      ) : (
-                        <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="flex items-center justify-center gap-2 px-4 py-3 bg-purple-600 hover:bg-purple-500 rounded-xl text-white font-medium transition-all duration-300">
-                          <span>Sign In</span>
-                        </Link>
-                      )}
-                    </nav>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
         </header>
 
         <main className="flex items-center justify-center min-h-[calc(100vh-8rem)] py-10 sm:py-20">
@@ -155,9 +124,9 @@ export default function Home() {
                     <span className="relative z-10 flex items-center gap-2">
                       {user ? (
                         <>
-                          {user.user_metadata?.avatar_url ? (
+                          {userAvatarUrl ? (
                             <img 
-                              src={user.user_metadata.avatar_url} 
+                              src={userAvatarUrl} 
                               alt={user.email || 'User'} 
                               className="w-6 h-6 rounded-full"
                             />
@@ -335,7 +304,6 @@ export default function Home() {
                   <span className="text-gray-300">Unlimited Conversions</span>
                 </li>
                 <li className="flex items-center gap-3">
-                  <XMarkIcon className="w-5 h-5 text-gray-600" />
                   <span className="text-gray-500">Batch Conversions</span>
                 </li>
               </ul>
