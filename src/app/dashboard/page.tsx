@@ -108,7 +108,7 @@ export default function Dashboard() {
               className="w-8 h-8 rounded-full"
             />
           ) : (
-            <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-cyan-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+            <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
               {userInitial}
             </div>
           )}
@@ -117,9 +117,9 @@ export default function Dashboard() {
       </div>
 
       {showMotd && (
-        <div className={`mb-8 bg-gradient-to-r from-purple-600/20 to-cyan-600/20 border border-purple-500/30 rounded-xl p-5 flex items-center justify-between backdrop-blur-sm transition-all duration-500 delay-300 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
+        <div className={`mb-8 bg-purple-600/20 border border-purple-500/30 rounded-xl p-5 flex items-center justify-between backdrop-blur-sm transition-all duration-500 delay-300 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-cyan-500 rounded-full flex items-center justify-center">
+            <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center">
               <span className="text-lg">✨</span>
             </div>
             <div>
@@ -144,30 +144,30 @@ export default function Dashboard() {
           <div className="text-sm text-gray-500">Total Uploads</div>
         </div>
 
-        <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 hover:border-cyan-500/50 transition-all duration-300 group">
+        <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 hover:border-purple-500/50 transition-all duration-300 group">
           <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-cyan-500/20 to-cyan-600/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-              <CloudIcon className="w-6 h-6 text-cyan-400" />
+            <div className="w-12 h-12 bg-purple-600/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+              <CloudIcon className="w-6 h-6 text-purple-400" />
             </div>
           </div>
           <div className="text-3xl font-bold text-white mb-1">{formatBytes(stats.totalSize)}</div>
           <div className="text-sm text-gray-500">of 5 GB</div>
         </div>
 
-        <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 hover:border-pink-500/50 transition-all duration-300 group">
+        <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 hover:border-purple-500/50 transition-all duration-300 group">
           <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-pink-500/20 to-pink-600/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-              <ArrowUpTrayIcon className="w-6 h-6 text-pink-400" />
+            <div className="w-12 h-12 bg-purple-600/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+              <ArrowUpTrayIcon className="w-6 h-6 text-purple-400" />
             </div>
           </div>
           <div className="text-3xl font-bold text-white mb-1">{stats.conversionCount}</div>
           <div className="text-sm text-gray-500">Conversions</div>
         </div>
 
-        <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 hover:border-blue-500/50 transition-all duration-300 group">
+        <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 hover:border-purple-500/50 transition-all duration-300 group">
           <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-              <CalendarIcon className="w-6 h-6 text-blue-400" />
+            <div className="w-12 h-12 bg-purple-600/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+              <CalendarIcon className="w-6 h-6 text-purple-400" />
             </div>
           </div>
           <div className="text-3xl font-bold text-white mb-1">{weeklyData.reduce((sum, day) => sum + day.uploads, 0)}</div>
@@ -220,26 +220,26 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 hover:border-cyan-500/30 transition-all duration-300">
+        <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 hover:border-purple-500/30 transition-all duration-300">
           <h2 className="text-xl font-bold text-white mb-6">Quick Actions</h2>
           <div className="space-y-3 mb-6">
             <a
               href="/dashboard/uploads"
-              className="w-full flex items-center gap-3 px-4 py-3 bg-gray-800 hover:bg-gradient-to-r hover:from-purple-600 hover:to-cyan-600 rounded-xl text-white transition-all duration-300 transform hover:scale-105 group"
+              className="w-full flex items-center gap-3 px-4 py-3 bg-gray-800 hover:bg-purple-600 rounded-xl text-white transition-all duration-300 transform hover:scale-105 group"
             >
               <ArrowUpTrayIcon className="w-5 h-5 group-hover:scale-110 transition-transform" />
               <span className="font-medium">Upload Files</span>
             </a>
             <a
               href="/dashboard/uploads"
-              className="w-full flex items-center gap-3 px-4 py-3 bg-gray-800 hover:bg-gradient-to-r hover:from-purple-600 hover:to-cyan-600 rounded-xl text-white transition-all duration-300 transform hover:scale-105 group"
+              className="w-full flex items-center gap-3 px-4 py-3 bg-gray-800 hover:bg-purple-600 rounded-xl text-white transition-all duration-300 transform hover:scale-105 group"
             >
               <PhotoIcon className="w-5 h-5 group-hover:scale-110 transition-transform" />
               <span className="font-medium">View Uploads</span>
             </a>
             <a
               href="/dashboard/settings"
-              className="w-full flex items-center gap-3 px-4 py-3 bg-gray-800 hover:bg-gradient-to-r hover:from-purple-600 hover:to-cyan-600 rounded-xl text-white transition-all duration-300 transform hover:scale-105 group"
+              className="w-full flex items-center gap-3 px-4 py-3 bg-gray-800 hover:bg-purple-600 rounded-xl text-white transition-all duration-300 transform hover:scale-105 group"
             >
               <Cog6ToothIcon className="w-5 h-5 group-hover:scale-110 transition-transform" />
               <span className="font-medium">Settings</span>
@@ -250,7 +250,7 @@ export default function Dashboard() {
             <div className="text-2xl font-bold text-white mb-2">{formatBytes(stats.totalSize)} / 5 GB</div>
             <div className="w-full bg-gray-800 rounded-full h-2">
               <div 
-                className="bg-gradient-to-r from-purple-500 to-cyan-500 h-2 rounded-full transition-all duration-500" 
+                className="bg-purple-600 h-2 rounded-full transition-all duration-500" 
                 style={{ width: `${Math.min(storagePercentage, 100)}%` }}
               ></div>
             </div>

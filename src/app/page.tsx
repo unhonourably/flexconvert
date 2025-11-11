@@ -15,20 +15,19 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-black relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-950/20 via-black to-cyan-950/20"></div>
+      <div className="absolute inset-0"></div>
       
       <div className="absolute inset-0">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse-slow"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '1s' }}></div>
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <header className={`py-8 flex items-center justify-between transition-all duration-1000 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-cyan-500 rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
               <SparklesIcon className="w-6 h-6 text-white" />
             </div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">flexconvert</h1>
+            <h1 className="text-2xl font-bold text-purple-400">flexconvert</h1>
           </div>
           <nav className="hidden md:flex items-center gap-6">
             <Link href="#features" className="text-gray-400 hover:text-white transition-colors duration-300">Features</Link>
@@ -45,7 +44,7 @@ export default function Home() {
                     className="w-8 h-8 rounded-full"
                   />
                 ) : (
-                  <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-cyan-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                  <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
                     {(user.user_metadata?.full_name || user.user_metadata?.name || user.email?.charAt(0) || 'U').toUpperCase()}
                   </div>
                 )}
@@ -53,7 +52,7 @@ export default function Home() {
             ) : (
               <Link 
                 href="/login" 
-                className="px-5 py-2 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-lg text-white font-medium hover:from-purple-500 hover:to-cyan-500 transition-all duration-300 transform hover:scale-105"
+                className="px-5 py-2 bg-purple-600 rounded-lg text-white font-medium hover:bg-purple-500 transition-all duration-300 transform hover:scale-105"
               >
                 Sign In
               </Link>
@@ -74,7 +73,7 @@ export default function Home() {
               <div className={`space-y-8 transition-all duration-700 delay-200 ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
                 <h2 className="text-7xl md:text-8xl font-extrabold leading-tight">
                   <span className="block text-white">Transform</span>
-                  <span className="block bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">Any File</span>
+                  <span className="block text-purple-400">Any File</span>
                   <span className="block text-white">Instantly</span>
                 </h2>
                 
@@ -85,7 +84,7 @@ export default function Home() {
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Link 
                     href={user ? "/dashboard" : "/login"} 
-                    className="group px-8 py-4 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-xl text-white font-semibold hover:from-purple-500 hover:to-cyan-500 transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-purple-500/50 flex items-center justify-center gap-2"
+                    className="group px-8 py-4 bg-purple-600 rounded-xl text-white font-semibold hover:bg-purple-500 transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-purple-500/50 flex items-center justify-center gap-2"
                   >
                     {user ? (
                       <>
@@ -132,10 +131,10 @@ export default function Home() {
 
               <div className={`relative transition-all duration-700 delay-300 ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-20'}`}>
                 <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-cyan-500/20 rounded-2xl blur-2xl transform rotate-6"></div>
+                  <div className="absolute inset-0 bg-purple-500/20 rounded-2xl blur-2xl transform rotate-6"></div>
                   <div className="relative bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-8 space-y-6 animate-float">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
+                      <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center">
                         <span className="text-2xl">📄</span>
                       </div>
                       <div>
@@ -144,7 +143,7 @@ export default function Home() {
                       </div>
                     </div>
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-lg flex items-center justify-center">
+                      <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center">
                         <span className="text-2xl">🖼️</span>
                       </div>
                       <div>
@@ -153,7 +152,7 @@ export default function Home() {
                       </div>
                     </div>
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-pink-600 rounded-lg flex items-center justify-center">
+                      <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center">
                         <span className="text-2xl">🎬</span>
                       </div>
                       <div>

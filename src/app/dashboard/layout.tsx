@@ -58,7 +58,7 @@ export default function DashboardLayout({
       <aside className="w-64 bg-black border-r border-gray-900 flex flex-col fixed left-0 top-0 bottom-0 z-40">
         <div className="p-6 border-b border-gray-900">
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-cyan-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <div className="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
               <SparklesIcon className="w-6 h-6 text-white" />
             </div>
             <div>
@@ -74,7 +74,7 @@ export default function DashboardLayout({
             prefetch={true}
             className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
               isActive('/dashboard')
-                ? 'bg-gradient-to-r from-purple-600/20 to-cyan-600/20 border border-purple-500/30 text-white'
+                ? 'bg-purple-600/20 border border-purple-500/30 text-white'
                 : 'text-gray-400 hover:text-white hover:bg-gray-900/50'
             }`}
           >
@@ -89,7 +89,7 @@ export default function DashboardLayout({
               prefetch={true}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
                 isActive('/dashboard/uploads')
-                  ? 'bg-gradient-to-r from-purple-600/20 to-cyan-600/20 border border-purple-500/30 text-white'
+                  ? 'bg-purple-600/20 border border-purple-500/30 text-white'
                   : 'text-gray-400 hover:text-white hover:bg-gray-900/50'
               }`}
             >
@@ -101,7 +101,7 @@ export default function DashboardLayout({
               prefetch={true}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
                 isActive('/dashboard/analytics')
-                  ? 'bg-gradient-to-r from-purple-600/20 to-cyan-600/20 border border-purple-500/30 text-white'
+                  ? 'bg-purple-600/20 border border-purple-500/30 text-white'
                   : 'text-gray-400 hover:text-white hover:bg-gray-900/50'
               }`}
             >
@@ -113,7 +113,7 @@ export default function DashboardLayout({
               prefetch={true}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
                 isActive('/dashboard/settings')
-                  ? 'bg-gradient-to-r from-purple-600/20 to-cyan-600/20 border border-purple-500/30 text-white'
+                  ? 'bg-purple-600/20 border border-purple-500/30 text-white'
                   : 'text-gray-400 hover:text-white hover:bg-gray-900/50'
               }`}
             >
@@ -128,7 +128,7 @@ export default function DashboardLayout({
               href="/dashboard/account" 
               className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
                 isActive('/dashboard/account')
-                  ? 'bg-gradient-to-r from-purple-600/20 to-cyan-600/20 border border-purple-500/30 text-white'
+                  ? 'bg-purple-600/20 border border-purple-500/30 text-white'
                   : 'text-gray-400 hover:text-white hover:bg-gray-900/50'
               }`}
             >
@@ -139,7 +139,7 @@ export default function DashboardLayout({
               href="/dashboard/premium" 
               className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
                 isActive('/dashboard/premium')
-                  ? 'bg-gradient-to-r from-purple-600/20 to-cyan-600/20 border border-purple-500/30 text-white'
+                  ? 'bg-purple-600/20 border border-purple-500/30 text-white'
                   : 'text-gray-400 hover:text-white hover:bg-gray-900/50'
               }`}
             >
@@ -154,7 +154,7 @@ export default function DashboardLayout({
             {userAvatar ? (
               <img src={userAvatar} alt={userDisplayName} className="w-10 h-10 rounded-full" />
             ) : (
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold">
+              <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold">
                 {userInitial}
               </div>
             )}

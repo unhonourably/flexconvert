@@ -78,7 +78,7 @@ export default function PremiumPage() {
           </ul>
         </div>
 
-        <div className="bg-gradient-to-br from-purple-600/20 to-cyan-600/20 backdrop-blur-sm border-2 border-purple-500/50 rounded-xl p-8 relative overflow-hidden">
+        <div className="bg-purple-600/20 backdrop-blur-sm border-2 border-purple-500/50 rounded-xl p-8 relative overflow-hidden">
           <div className="absolute top-4 right-4 px-3 py-1 bg-yellow-400 text-black text-xs font-bold rounded-full">
             RECOMMENDED
           </div>
@@ -120,15 +120,15 @@ export default function PremiumPage() {
             <p className="text-gray-400">Never worry about running out of space. Upload and convert as many files as you need.</p>
           </div>
           <div>
-            <div className="w-12 h-12 bg-gradient-to-br from-cyan-500/20 to-cyan-600/20 rounded-lg flex items-center justify-center mb-4">
-              <SparklesIcon className="w-6 h-6 text-cyan-400" />
+            <div className="w-12 h-12 bg-purple-600/20 rounded-lg flex items-center justify-center mb-4">
+              <SparklesIcon className="w-6 h-6 text-purple-400" />
             </div>
             <h3 className="text-lg font-semibold text-white mb-2">Higher File Size Limit</h3>
             <p className="text-gray-400">Upload and convert larger files up to 10 GB per file.</p>
           </div>
           <div>
-            <div className="w-12 h-12 bg-gradient-to-br from-pink-500/20 to-pink-600/20 rounded-lg flex items-center justify-center mb-4">
-              <SparklesIcon className="w-6 h-6 text-pink-400" />
+            <div className="w-12 h-12 bg-purple-600/20 rounded-lg flex items-center justify-center mb-4">
+              <SparklesIcon className="w-6 h-6 text-purple-400" />
             </div>
             <h3 className="text-lg font-semibold text-white mb-2">Batch Conversions</h3>
             <p className="text-gray-400">Convert multiple files at once with batch processing capabilities.</p>

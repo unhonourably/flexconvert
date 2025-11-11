@@ -124,7 +124,7 @@ export default function AnalyticsPage() {
 
           <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6">
             <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-              <ChartBarIcon className="w-6 h-6 text-cyan-400" />
+              <ChartBarIcon className="w-6 h-6 text-purple-400" />
               Conversion Status
             </h2>
             <div className="h-64">

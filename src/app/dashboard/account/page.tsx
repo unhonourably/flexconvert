@@ -183,7 +183,7 @@ export default function AccountPage() {
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 rounded-xl text-white font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-3 bg-purple-600 hover:bg-purple-500 rounded-xl text-white font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Updating...' : 'Update Profile'}
             </button>
@@ -192,13 +192,13 @@ export default function AccountPage() {
 
         <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6">
           <div className="flex items-center gap-3 mb-6">
-            <KeyIcon className="w-6 h-6 text-cyan-400" />
+            <KeyIcon className="w-6 h-6 text-purple-400" />
             <h2 className="text-xl font-bold text-white">Change Password</h2>
           </div>
           {isOAuthUser ? (
             <div className="p-4 bg-gray-800/50 border border-gray-700 rounded-xl">
               <p className="text-gray-300">
-                Authentication is handled through <span className="font-semibold text-cyan-400">{providerName}</span>. 
+                Authentication is handled through <span className="font-semibold text-purple-400">{providerName}</span>. 
                 To change your password, please update it in your {providerName} account settings.
               </p>
             </div>
@@ -235,7 +235,7 @@ export default function AccountPage() {
               <button
                 type="submit"
                 disabled={loading || !formData.newPassword || !formData.confirmPassword}
-                className="px-6 py-3 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 rounded-xl text-white font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-3 bg-purple-600 hover:bg-purple-500 rounded-xl text-white font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'Updating...' : 'Change Password'}
               </button>

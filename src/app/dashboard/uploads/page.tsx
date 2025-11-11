@@ -562,7 +562,7 @@ export default function UploadsPage() {
           </div>
           <button
             onClick={() => setShowUploadModal(true)}
-            className="px-6 py-3 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 rounded-xl text-white font-semibold transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
+            className="px-6 py-3 bg-purple-600 hover:bg-purple-500 rounded-xl text-white font-semibold transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
           >
             <ArrowUpTrayIcon className="w-5 h-5" />
             Upload File
@@ -623,7 +623,7 @@ export default function UploadsPage() {
             <p className="text-gray-400 mb-6">Upload your first file to get started</p>
             <button
               onClick={() => setShowUploadModal(true)}
-              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 rounded-xl text-white font-semibold transition-all duration-300"
+              className="px-6 py-3 bg-purple-600 hover:bg-purple-500 rounded-xl text-white font-semibold transition-all duration-300"
             >
               Upload File
             </button>
@@ -639,7 +639,7 @@ export default function UploadsPage() {
                 setFileTypeFilter('all')
                 setConversionStatusFilter('all')
               }}
-              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 rounded-xl text-white font-semibold transition-all duration-300"
+              className="px-6 py-3 bg-purple-600 hover:bg-purple-500 rounded-xl text-white font-semibold transition-all duration-300"
             >
               Clear Filters
             </button>
@@ -766,7 +766,7 @@ export default function UploadsPage() {
                       setFormatSearch('')
                       setSelectedFormat(null)
                     }}
-                    className="flex-1 px-4 py-2 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 rounded-lg text-white text-sm font-medium transition-all duration-300"
+                    className="flex-1 px-4 py-2 bg-purple-600 hover:bg-purple-500 rounded-lg text-white text-sm font-medium transition-all duration-300"
                   >
                     {upload.conversions && upload.conversions.length > 0 ? 'Convert Again' : 'Convert'}
                   </button>
@@ -805,7 +805,7 @@ export default function UploadsPage() {
                           onClick={() => setCurrentPage(page)}
                           className={`px-4 py-2 rounded-lg transition-all duration-300 ${
                             currentPage === page
-                              ? 'bg-gradient-to-r from-purple-600 to-cyan-600 text-white'
+                              ? 'bg-purple-600 text-white'
                               : 'bg-gray-800 border border-gray-700 text-white hover:bg-gray-700'
                           }`}
                         >
@@ -963,7 +963,7 @@ export default function UploadsPage() {
             <button
               onClick={handleUploadAndConvert}
               disabled={!selectedFormat || uploading || converting}
-              className="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 rounded-xl text-white font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full px-6 py-3 bg-purple-600 hover:bg-purple-500 rounded-xl text-white font-semibold transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {uploading || converting ? 'Processing...' : 'Upload & Convert'}
             </button>
