@@ -22,8 +22,9 @@ export async function GET(request: Request) {
       }
 
       if (data?.user) {
-        const { data: { identities } } = await supabase.auth.getUserIdentities()
-        const providerIdentity = identities?.find(id => 
+        const { data: identitiesData } = await supabase.auth.getUserIdentities()
+        const identities = identitiesData?.identities || []
+        const providerIdentity = identities.find((id: any) => 
           id.provider === 'discord' || id.provider === 'github'
         )
         
