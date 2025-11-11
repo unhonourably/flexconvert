@@ -9,6 +9,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "flexconvert - File Conversion Platform",
   description: "Convert any file format instantly. Transform documents, images, videos, and more.",
+  icons: {
+    icon: '/icon.png',
+  },
 };
 
 export default function RootLayout({
