@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/contexts/AuthContext'
-import { SparklesIcon } from '@heroicons/react/24/outline'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -74,42 +73,31 @@ export default function LoginPage() {
     }
   }
 
-  if (!mounted) {
-    return null
-  }
-
   return (
     <div className="min-h-screen bg-black relative overflow-hidden flex items-center justify-center">
-      <div className="absolute inset-0"></div>
-      <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse-slow"></div>
-      </div>
 
-      <div className={`relative z-10 w-full max-w-md px-6 transition-all duration-700 delay-100 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-        <div className="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-8 shadow-2xl">
-          <div className="flex items-center justify-center gap-3 mb-8">
-            <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center">
-              <SparklesIcon className="w-7 h-7 text-white" />
-            </div>
+      <div className={`relative z-10 w-full max-w-md px-6 transition-all duration-1000 ease-out ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+        <div className={`bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-8 shadow-2xl transition-all duration-1000 ease-out delay-300 ${mounted ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
+          <div className={`flex items-center justify-center gap-3 mb-8 transition-all duration-700 ease-out delay-500 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
             <h1 className="text-2xl font-bold text-purple-400">
               flexconvert
             </h1>
           </div>
 
-          <h2 className="text-3xl font-bold text-white mb-2 text-center">
+          <h2 className={`text-3xl font-bold text-white mb-2 text-center transition-all duration-700 ease-out delay-600 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
             {isSignUp ? 'Create Account' : 'Welcome Back'}
           </h2>
-          <p className="text-gray-400 text-center mb-8">
+          <p className={`text-gray-400 text-center mb-8 transition-all duration-700 ease-out delay-700 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
             {isSignUp ? 'Sign up to get started' : 'Sign in to continue'}
           </p>
 
           {error && (
-            <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+            <div className={`mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm transition-all duration-500 ease-out delay-800 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
               {error}
             </div>
           )}
 
-          <div className="space-y-4 mb-6">
+          <div className={`space-y-4 mb-6 transition-all duration-700 ease-out delay-800 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
             <button
               onClick={() => handleOAuth('discord')}
               disabled={loading}
@@ -133,7 +121,7 @@ export default function LoginPage() {
             </button>
           </div>
 
-          <div className="relative mb-6">
+          <div className={`relative mb-6 transition-all duration-700 ease-out delay-900 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-800"></div>
             </div>
@@ -142,7 +130,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <form onSubmit={handleEmailAuth} className="space-y-4">
+          <form onSubmit={handleEmailAuth} className={`space-y-4 transition-all duration-700 ease-out delay-1000 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
                 Email
@@ -183,7 +171,7 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="mt-6 text-center">
+          <div className={`mt-6 text-center transition-all duration-700 ease-out delay-1100 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
             <button
               onClick={() => {
                 setIsSignUp(!isSignUp)
@@ -195,7 +183,7 @@ export default function LoginPage() {
             </button>
           </div>
 
-          <div className="mt-6 text-center">
+          <div className={`mt-6 text-center transition-all duration-700 ease-out delay-1200 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
             <Link href="/" className="text-gray-500 hover:text-gray-400 text-sm transition-colors">
               ← Back to home
             </Link>

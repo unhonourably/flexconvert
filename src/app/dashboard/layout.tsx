@@ -9,7 +9,6 @@ import {
   ChartBarIcon,
   UserCircleIcon,
   ArrowRightOnRectangleIcon,
-  SparklesIcon,
   Cog6ToothIcon
 } from '@heroicons/react/24/outline'
 import { useAuth } from '@/contexts/AuthContext'
@@ -58,9 +57,6 @@ export default function DashboardLayout({
       <aside className="w-64 bg-black border-r border-gray-900 flex flex-col fixed left-0 top-0 bottom-0 z-40">
         <div className="p-6 border-b border-gray-900">
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-              <SparklesIcon className="w-6 h-6 text-white" />
-            </div>
             <div>
               <div className="text-white font-bold text-lg">flexconvert</div>
               <div className="text-xs text-gray-500">/dashboard</div>
